@@ -3,6 +3,8 @@
 Created on Sun Apr 25 12:29:47 2021
 
 @author: Zach Chartrand <zachartrand999@gmail.com>
+
+A module for playing cards.
 """
 
 __all__ = ['PlayingCard', 'Deck', 'makeDeckInNewDeckOrder', 'makeEuchreDeck']
@@ -142,8 +144,12 @@ class Deck():
 
     def get_list_of_cards(self, start: int = -1, stop: int = -1) -> List[str]:
         """
-        Returns a list of the names of the cards in the deck from top
-        to bottom.
+        Returns a list of the names of the cards in the deck. By
+        default, this lists all of the cards from top to bottom. If
+        start is defined, this method will show all the cards from that
+        index to the end. If stop is defined, this method will list all
+        of the cards from the beginning to the stop index. If both are
+        defined, this method will list the cards from start to stop.
         """
         listOfCards = []
         if (start, stop) == (-1, -1):
@@ -170,12 +176,14 @@ class Deck():
         """
         return self.cards[index]
 
-    def shuffle(self) -> None:
+    def shuffle(self, n: int=1) -> None:
         """
-        Shuffles the cards.
+        Shuffles the cards n times. By default, the deck is shuffled
+        once.
         """
         if self.cards:
-            _shuffle(self.cards)
+            for _ in range(n):
+                _shuffle(self.cards)
 
     def cut(self, cards_off_top: int = -1) -> None:
         """
@@ -193,6 +201,8 @@ class Deck():
 
     def deal_top_card(self) -> PlayingCard or None:
         """
+        Deals the top card of the deck.
+
         Returns the top card and removes it from the deck.
         """
         if self.cards:
@@ -201,6 +211,27 @@ class Deck():
             return card
 
         return None
+
+    def bottom_deal(self):
+        """
+        Deals the card from the bottom of the deck.
+
+        This method returns the playing card at the last index and
+        removes it from the deck.
+        """
+        if self.cards:
+            card = self.cards[-1]
+            self.cards.remove(card)
+            return card
+
+    def second_deal(self):
+        """
+        Deals the second card in the deck.
+        """
+        if len(self) >= 2:
+            card = self.cards[1]
+            self.cards.remove(card)
+            return card
 
     def out_faro(self, number_of_cards_on_top: int = 0,
                  number_of_cards_on_bottom: int = 0) -> None:
