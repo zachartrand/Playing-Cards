@@ -18,6 +18,12 @@ VALUES = ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight',
 SUITS = ['Clubs', 'Hearts', 'Spades', 'Diamonds']
 
 
+def main():
+    deck = makeDeckInNewDeckOrder()
+    print("A deck of playing cards in American new deck order:\n")
+    deck.print_cards()
+
+
 class PlayingCard():
     """
     Class for Playing Card objects.
@@ -212,7 +218,7 @@ class Deck():
 
         return None
 
-    def bottom_deal(self):
+    def bottom_deal(self) -> PlayingCard or None:
         """
         Deals the card from the bottom of the deck.
 
@@ -223,8 +229,10 @@ class Deck():
             card = self.cards[-1]
             self.cards.remove(card)
             return card
+        
+        return None
 
-    def second_deal(self):
+    def second_deal(self) -> PlayingCard or None:
         """
         Deals the second card in the deck.
         """
@@ -232,6 +240,8 @@ class Deck():
             card = self.cards[1]
             self.cards.remove(card)
             return card
+        
+        return None
 
     def out_faro(self, number_of_cards_on_top: int = 0,
                  number_of_cards_on_bottom: int = 0) -> None:
@@ -286,7 +296,7 @@ class Deck():
         self.cards = newDeck
 
     def in_faro(self, number_of_cards_on_top: int = 0,
-                 number_of_cards_on_bottom: int = 0) -> None:
+                number_of_cards_on_bottom: int = 0) -> None:
         """
         Performs an in-faro shuffle on the deck.
 
@@ -336,7 +346,7 @@ class Deck():
             print(i, card.get_name())
 
 
-def makeDeckInNewDeckOrder(mode: str='US') -> Deck:
+def makeDeckInNewDeckOrder(mode: str="US") -> Deck:
     """
     Creates and returns a Deck object in New Deck Order (NDO).
 
@@ -345,34 +355,19 @@ def makeDeckInNewDeckOrder(mode: str='US') -> Deck:
     used by European playing card companies like, e.g., Cartamundi.
     """
     deck = []
-    if mode == 'US':
-        # Hearts
-        for value in VALUES:
-            deck.append(PlayingCard(value, 'Hearts'))
-        # Clubs
-        for value in VALUES:
-            deck.append(PlayingCard(value, 'Clubs'))
-        # Diamonds. Note: value order reverses.
-        for value in reversed(VALUES):
-            deck.append(PlayingCard(value, 'Diamonds'))
-        # Spades
-        for value in reversed(VALUES):
-            deck.append(PlayingCard(value, 'Spades'))
-    elif mode == 'European':
-        # Spades
-        for value in VALUES:
-            deck.append(PlayingCard(value, 'Spades'))
-        # Hearts
-        for value in VALUES:
-            deck.append(PlayingCard(value, 'Hearts'))
-        # Diamonds. Note: value order reverses.
-        for value in reversed(VALUES):
-            deck.append(PlayingCard(value, 'Diamonds'))
-        # Clubs
-        for value in reversed(VALUES):
-            deck.append(PlayingCard(value, 'Clubs'))
+    suitOrder = dict(
+        US = ("Hearts", "Clubs", "Diamonds", "Spades"),
+        European = ("Spades", "Hearts", "Diamonds", "Clubs"),
+    )
+    if mode in suitOrder.keys():
+        for suit in suitOrder[mode][:2]:
+            for value in range(1, 14):
+                deck.append(PlayingCard(value, suit))
+        for suit in suitOrder[mode][2:]:
+            for value in reversed(range(1, 14)):
+                deck.append(PlayingCard(value, suit))
     else:
-        raise ValueError("mode must be 'US' or 'European'")
+        raise ValueError("mode must be 'US' or 'European'.")
 
     return Deck(deck)
 
@@ -380,8 +375,12 @@ def makeDeckInNewDeckOrder(mode: str='US') -> Deck:
 def makeEuchreDeck() -> Deck:
     cards = []
     for suit in SUITS:
-        for value in VALUES[8:]:
+        for value in range(9, 14):
             cards.append(PlayingCard(value, suit))
         cards.append(PlayingCard(1, suit))
 
     return Deck(cards)
+
+
+if __name__ == "__main__":
+    main()
